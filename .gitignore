@@ -1,0 +1,8 @@
+.git/
+back/.idea/
+back/bin/
+back/obj/
+back/Properties
+back/appsettings.Development.json
+back/appsettings.json
+front/idea/

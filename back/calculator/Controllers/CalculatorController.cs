@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace calculator.Controllers;
 
+/**
+ * Handles API calls from front. Calculator can be found from localhost:5050/Calculator
+ */
 [ApiController]
 [Route("[controller]")]
 public class CalculatorController : Controller
@@ -15,9 +18,12 @@ public class CalculatorController : Controller
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok("Connected");
+        return Ok("Connected to the calculator API (Hi :D) ");
     }
-
+    
+    /**
+     * 
+     */
     [HttpPost]
     public IActionResult Post([FromBody] CalcRequest request )
     {

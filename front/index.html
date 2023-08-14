@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The worst calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #232323;
+            color: #fff;
+        }
+        .calculator {
+            width: 254px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #757575;
+            border-radius: 5px;
+            background-color: rgb(117, 117, 117);
+            box-shadow: 0 2px 5px rgba(103, 76, 76, 0.1);
+        }
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #232323;
+        }
+        button {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #232323;
+            background-color: #565656;
+            font-size: 18px;
+            margin: 5px;
+        }
+        .notifications {
+            background-color: #ffcccc;
+            border: 1px solid #ff0000;
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        #notificationText {
+            width: 100%;
+            height: 100%;
+            resize: none;
+            border: none;
+            background-color: #ffcccc;
+            color: #ff0000;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<div class="calculator">
+    <input type="text" id="result" readonly>
+    <button onclick="addChar('7')">7</button>
+    <button onclick="addChar('8')">8</button>
+    <button onclick="addChar('9')">9</button>
+    <button onclick="addChar('+')">+</button>
+    <button onclick="addChar('4')">4</button>
+    <button onclick="addChar('5')">5</button>
+    <button onclick="addChar('6')">6</button>
+    <button onclick="addChar('-')">-</button>
+    <button onclick="addChar('1')">1</button>
+    <button onclick="addChar('2')">2</button>
+    <button onclick="addChar('3')">3</button>
+    <button onclick="addChar('*')">*</button>
+    <button onclick="addChar('0')">0</button>
+    <button onclick="clearResult()">C</button>
+    <button onclick="requestResult()">=</button>
+    <button onclick="addChar('/')">/</button>
+</div>
+<div class="notifications" style="display: none;">
+    <textarea id="notificationText" rows="2" readonly></textarea>
+</div>
+
+<script>
+    function addChar(value) {
+        document.getElementById("result").value += value;
+    }
+
+    function clearResult() {
+        document.querySelector(".notifications").style.display = "none";
+        document.getElementById("result").value = "";
+    }
+
+    function requestResult() {
+        let operation = document.getElementById("result").value;
+
+        const regex = /(-?\d+)\s*([-+*/])\s*(-?\d+)/;
+        const matchedOperation = operation.match(regex);
+
+        if (matchedOperation){
+            const data = {
+                num1: matchedOperation[1],
+                num2: matchedOperation[3],
+                operation: matchedOperation[2]
+            }
+
+            try {
+                fetch("http://localhost:5050/Calculator", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(response => response.json())
+                    .then(apiResponse => {
+                        console.log(apiResponse)
+                        const result = apiResponse.result;
+                        document.getElementById("result").value = result;
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        document.getElementById("notificationText").value = "Error while calculating\n" +
+                            error
+                        document.querySelector(".notifications").style.display = "block";
+                    })
+
+            } catch (error) {
+                document.getElementById("result").value = "Error";
+            }
+        }
+        else {
+            console.error("Invalid operation")
+            document.getElementById("notificationText").value = "Invalid operation\n" +
+                "Please enter two whole numbers and an operator"
+            document.querySelector(".notifications").style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>

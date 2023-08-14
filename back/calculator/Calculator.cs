@@ -2,20 +2,23 @@ namespace calculator
 {
     public class Calculator
     {
+        /**
+         * Calculates the calculation received in json from front
+         */
         public double Calculate(CalcRequest request)
         {
             switch (request.operation.ToLower())
             {
-                case "add":
+                case "+":
                     return request.num1 + request.num2;
-                case "subtract":
+                case "-":
                     return request.num1 - request.num2;
-                case "multiply":
+                case "*":
                     return request.num1 * request.num2;
-                case "divide":
+                case "/":
                     if (request.num2 == 0)
                         throw new ArgumentException("Can't divide by 0.");
-                    return request.num1 / request.num2;
+                    return (double)request.num1 / request.num2;
                 default:
                     throw new ArgumentException("Operation not implemented.");
             }
